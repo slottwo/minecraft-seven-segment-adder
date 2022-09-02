@@ -1,15 +1,6 @@
 #!/bin/python3
 
-
-"""  0   1   2   3   4   5   6   7   8   9
-
- A   _       _   _       _   _   _   _   _
-BDC | |   |  _|  _| |_| |_  |_    | |_| |_|
-EGF |_|   | |_   _|   |  _| |_|   | |_|  _|
-
-"""
-
-LED_LABELS = tuple('ABCDEFG')
+LED_LABELS = tuple('abcdefg')
 
 #      binary         seven segment
 #   (2³ 2² 2¹ 1): (A  B  C  D  E  F  G)
@@ -26,10 +17,8 @@ TRUTH_TABLE = {
     (1, 0, 0, 1): (1, 1, 1, 1, 0, 1, 1),  # 9
 }
 
-# TRUTH_TABLE_OUT = { value: key for key, value in TRUTH_TABLE_IN.items() }
 
-
-def led_to_bin(table: dict[tuple: tuple]) -> str:
+def sum_of_products(table: dict[tuple: tuple]) -> tuple[str]:
 
     num_of_bits = len(list(table.keys())[0])
     for bit_indice in range(num_of_bits):
@@ -39,22 +28,16 @@ def led_to_bin(table: dict[tuple: tuple]) -> str:
         for bits, leds in table.items():
             if bits[bit_indice]:
                 sum += ' + ' if sum else ''
-                sum += ''.join(LED_LABELS[i].upper() if led else
-                               LED_LABELS[i].lower()
-                               for i, led in enumerate(leds))
+                sum += ' * '.join(LED_LABELS[i] if led else
+                                  f'(not {LED_LABELS[i]})'
+                                  for i, led in enumerate(leds))
         print(sum)
 
-        """
-            print(' + ' if i else '', end='')
-            for i, led in enumerate(leds):
-                print(LED_LABELS[i].upper() if led else
-                      LED_LABELS[i].lower(),
-                      end='')"""
 
-
+# debug
 print('\nLEDS TO BITS\n')
-led_to_bin(TRUTH_TABLE)
+sum_of_products(TRUTH_TABLE)
 print('\nBITS TO LEDS\n')
-led_to_bin(dict(zip(TRUTH_TABLE.values(),
-                    TRUTH_TABLE.keys())))
+sum_of_products(dict(zip(TRUTH_TABLE.values(),
+                         TRUTH_TABLE.keys())))
 print()
