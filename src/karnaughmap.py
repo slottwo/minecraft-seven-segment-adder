@@ -40,7 +40,20 @@ def cell_xpath(column: int, line: int) -> str:
     return f"//*[name()='text' and @x='{column*40+61}' and @y={line*40+98}]"
 
 
-def open_page():
+def equation_formatting(eq: str) -> str:
+    eq = eq.removeprefix("y = ")
+    eq = eq.replace("x̄", "!x")
+    eq = eq.replace("x4", "a ")
+    eq = eq.replace("x3", "b ")
+    eq = eq.replace("x2", "c ")
+    eq = eq.replace("x1", "d ")
+    eq = eq.replace("x0", "e ")
+    eq = eq.replace(" )", ")")
+    eq = eq.replace("∨", "+")
+    return eq
+
+
+def open_web_page():
     # Setup webdriver
     KV_HOST = "https://www.mathematik.uni-marburg.de/~thormae/lectures/ti1/code/karnaughmap/index.html"
     driver = webdriver.Firefox()
@@ -60,7 +73,7 @@ if __name__ == '__main__':
     equations = []
     for segment_index in range(8):
         print("Segment", segment_index)
-        with open_page() as driver:
+        with open_web_page() as driver:
             for seven_segments, binary in TRUTH_TABLE_OUT.items():
                 if seven_segments[segment_index]:
                     cell = driver.find_element(
@@ -71,20 +84,9 @@ if __name__ == '__main__':
             print(output[1].text)
             equations.append(output[1].text)
             driver.close
+    
+    equations = list(map(equation_formatting, equations))
+    print(*equations, sep='\n')
 
-
-def equation_treatment(eq: str) -> str:
-    eq = eq.removeprefix("y = ")
-    eq = eq.replace("x̄", "!x")
-    eq = eq.replace("x4", "a ")
-    eq = eq.replace("x3", "b ")
-    eq = eq.replace("x2", "c ")
-    eq = eq.replace("x1", "d ")
-    eq = eq.replace("x0", "e ")
-    eq = eq.replace(" )", ")")
-    eq = eq.replace("∨", "+")
-    return eq
-
-
-map(equation_treatment, equations)
-print(equations)
+    with open('../bin2seg.txt', 'w') as save_file:
+        save_file.writelines(equations)
