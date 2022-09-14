@@ -3,6 +3,3 @@ geckodriver.log
 
 # python folders
 __pycache__
-
-# 3rd party code
-karnaugh-veitch-map
