@@ -82,11 +82,11 @@ if __name__ == '__main__':
                     cell.click()
             output = driver.find_elements(By.CLASS_NAME, "qmcMathFont")
             print(output[1].text)
-            equations.append(output[1].text)
+            equations.append(output[1].text+'\n')
             driver.close
-    
+
     equations = list(map(equation_formatting, equations))
-    print(*equations, sep='\n')
+    print(*equations)
 
     with open('../bin2seg.txt', 'w') as save_file:
         save_file.writelines(equations)
